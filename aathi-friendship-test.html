@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aathi Friendship Test 🔥</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #1a1a26;
+    --border: rgba(255,255,255,0.07);
+    --accent: #ff6b35;
+    --accent2: #ff9b35;
+    --glow: rgba(255,107,53,0.25);
+    --text: #f0f0f0;
+    --muted: #888;
+    --green: #22c55e;
+    --red: #ef4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated BG */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 10%, rgba(255,107,53,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 90%, rgba(255,155,53,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .noise {
+    position: fixed;
+    inset: 0;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  /* ── INTRO ── */
+  #screen-intro { text-align: center; padding-top: 60px; animation: fadeUp 0.6s ease both; }
+
+  .avatar-ring {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.8rem;
+    margin: 0 auto 28px;
+    box-shadow: 0 0 40px var(--glow);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 30px var(--glow); }
+    50%      { box-shadow: 0 0 60px rgba(255,107,53,0.5); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 30%, var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 300;
+    max-width: 420px;
+    margin: 0 auto 36px;
+    line-height: 1.6;
+  }
+
+  .pills {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .pill {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .pill span { color: var(--accent); font-weight: 600; }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px 40px;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 32px var(--glow);
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px var(--glow); }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ── QUIZ ── */
+  #screen-quiz { display: none; }
+
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .q-counter {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .progress-bar {
+    flex: 1; height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    margin: 0 16px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .score-live {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .score-live span { color: var(--green); }
+
+  /* Question card */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    animation: slideIn 0.35s cubic-bezier(0.34,1.3,0.64,1) both;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .bonus-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    font-family: 'Syne', sans-serif;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .q-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 14px;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    font-size: 0.95rem;
+    color: var(--text);
+    text-align: left;
+    animation: fadeUp 0.3s ease both;
+    animation-delay: calc(var(--i) * 0.05s);
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  .opt:hover:not(.locked) {
+    border-color: rgba(255,107,53,0.5);
+    background: rgba(255,107,53,0.06);
+    transform: translateX(4px);
+  }
+
+  .opt-letter {
+    width: 30px; height: 30px; flex-shrink: 0;
+    border-radius: 8px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--muted);
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .opt.correct {
+    border-color: var(--green);
+    background: rgba(34,197,94,0.08);
+  }
+  .opt.correct .opt-letter {
+    background: var(--green);
+    color: #fff;
+  }
+
+  .opt.wrong {
+    border-color: var(--red);
+    background: rgba(239,68,68,0.08);
+  }
+  .opt.wrong .opt-letter {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .opt.locked { cursor: default; }
+
+  .check-icon { margin-left: auto; font-size: 1.1rem; }
+
+  /* Next button */
+  .btn-next {
+    width: 100%;
+    margin-top: 16px;
+    padding: 15px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: none;
+    transition: opacity 0.2s, transform 0.15s;
+    box-shadow: 0 6px 24px var(--glow);
+    animation: fadeUp 0.3s ease;
+  }
+  .btn-next:hover { transform: translateY(-1px); }
+  .btn-next.show { display: block; }
+
+  /* ── RESULT ── */
+  #screen-result { display: none; text-align: center; animation: fadeUp 0.6s ease both; }
+
+  .result-ring {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.2rem;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 60px var(--glow);
+    animation: pop 0.5s cubic-bezier(0.34,1.6,0.64,1) 0.2s both;
+  }
+  @keyframes pop { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .result-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff, var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  .result-tier {
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+
+  .score-display {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .score-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+
+  .score-label { color: var(--muted); font-size: 0.9rem; }
+
+  .breakdown {
+    display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; justify-content: center;
+  }
+  .breakdown-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    flex: 1; min-width: 100px;
+  }
+  .breakdown-item .num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+  .breakdown-item .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .correct-num { color: var(--green); }
+  .wrong-num { color: var(--red); }
+
+  .share-section { margin-top: 16px; }
+
+  .btn-share {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    border: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .btn-share:hover { border-color: var(--accent); background: rgba(255,107,53,0.06); }
+
+  .btn-retry {
+    width: 100%;
+    padding: 15px;
+    border-radius: 14px;
+    border: none;
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    margin-top: 6px;
+  }
+  .btn-retry:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  .confetti-wrap { pointer-events: none; position: fixed; inset: 0; z-index: 999; overflow: hidden; }
+  .confetti-piece {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<div class="wrap">
+
+  <!-- INTRO -->
+  <div id="screen-intro">
+    <div class="avatar-ring">🔥</div>
+    <h1>Aathi Friendship Test</h1>
+    <p class="subtitle">Think you know Aathi? 21 questions to prove it. No cheating, no guessing — real knowledge only.</p>
+    <div class="pills">
+      <div class="pill"><span>21</span> Questions</div>
+      <div class="pill"><span>+1</span> Bonus Round</div>
+      <div class="pill">🏆 Score &amp; Rank</div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">Start the Test →</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz">
+    <div class="quiz-header">
+      <div class="q-counter" id="q-counter">Q1 / 21</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <div class="score-live">✅ <span id="live-score">0</span></div>
+    </div>
+
+    <div id="q-card" class="q-card">
+      <div id="bonus-badge" class="bonus-badge hidden">🔥 Bonus Question</div>
+      <div class="q-number" id="q-number">Question 1</div>
+      <div class="q-text" id="q-text"></div>
+    </div>
+
+    <div class="options" id="options"></div>
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()">Next →</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result">
+    <div class="confetti-wrap" id="confetti"></div>
+    <div class="result-ring" id="result-emoji">🤔</div>
+    <div class="result-title" id="result-title">Loading…</div>
+    <div class="result-tier" id="result-tier"></div>
+
+    <div class="score-display">
+      <div class="score-big" id="score-big">0</div>
+      <div class="score-label">out of 21</div>
+      <div class="breakdown">
+        <div class="breakdown-item">
+          <div class="num correct-num" id="bd-correct">0</div>
+          <div class="lbl">Correct</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="num wrong-num" id="bd-wrong">0</div>
+          <div class="lbl">Wrong</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="num" id="bd-pct" style="color:var(--accent2)">0%</div>
+          <div class="lbl">Accuracy</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="share-section">
+      <button class="btn-share" onclick="copyResult()">📋 Copy My Score to Share</button>
+      <button class="btn-share" onclick="shareWhatsApp()">💬 Share on WhatsApp</button>
+    </div>
+    <button class="btn-retry" onclick="restart()">↩ Try Again</button>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Which movie would Aathi choose if he could watch only one movie for the rest of his life?",
+    opts: ["Interstellar","The Dark Knight","Inception","Avengers: Endgame"],
+    ans: 2
+  },
+  {
+    q: "What kind of music does Aathi enjoy most?",
+    opts: ["Only Tamil songs","Only English songs","Songs with the best music regardless of language","Classical music only"],
+    ans: 2
+  },
+  {
+    q: "Which food can instantly make Aathi happy?",
+    opts: ["Kottu","Biriyani","Pizza","Shawarma"],
+    ans: 1
+  },
+  {
+    q: "What is Aathi's biggest fear?",
+    opts: ["Failure","Losing money","Betrayal","Public speaking"],
+    ans: 2
+  },
+  {
+    q: "Which car would Aathi choose if money wasn't a problem?",
+    opts: ["Lamborghini Aventador","Nissan GTR","Toyota Supra","Ford Mustang"],
+    ans: 3
+  },
+  {
+    q: "What would make Aathi happiest right now?",
+    opts: ["A gaming PC","A world tour","Spending time with his girlfriend (if he had one)","Becoming famous"],
+    ans: 2
+  },
+  {
+    q: "What annoys Aathi the most?",
+    opts: ["Being ignored","People asking too many questions","Someone repeatedly saying sorry for the same thing","Slow internet"],
+    ans: 2
+  },
+  {
+    q: "How does Aathi usually make important decisions?",
+    opts: ["Emotion","Gut feeling","Friends' opinions","Logic and facts"],
+    ans: 3
+  },
+  {
+    q: "Which memory would Aathi choose to relive?",
+    opts: ["School sports day","Family function","Trip with friends","Birthday celebration"],
+    ans: 2
+  },
+  {
+    q: "What kind of place would Aathi love living in?",
+    opts: ["Busy city","Luxury apartment","Peaceful and free environment","Crowded tourist area"],
+    ans: 2
+  },
+  {
+    q: "What quality does Aathi admire most in a person?",
+    opts: ["Intelligence","Loyalty","Wealth","Confidence"],
+    ans: 1
+  },
+  {
+    q: "What is Aathi's preferred love language?",
+    opts: ["Gifts","Words of affirmation","Quality time","Physical touch"],
+    ans: 2
+  },
+  {
+    q: "Which statement best describes Aathi?",
+    opts: ["I always follow rules","I'm a perfect good boy 😇","I'm not exactly a good boy 😆","I'm extremely rebellious"],
+    ans: 2
+  },
+  {
+    q: "If someone gave Aathi $1 million today, what would he do first?",
+    opts: ["Buy a mansion","Travel the world","Buy Bitcoin","Retire immediately"],
+    ans: 2
+  },
+  {
+    q: "Which of these best describes Aathi's personality?",
+    opts: ["Loud and attention-seeking","Deep thinker","Carefree and random","Extremely social"],
+    ans: 1
+  },
+  {
+    q: "What matters more to Aathi?",
+    opts: ["Popularity","Freedom","Luxury","Status"],
+    ans: 1
+  },
+  {
+    q: "Which would disappoint Aathi the most?",
+    opts: ["Losing a game","Losing money","Being betrayed by someone he trusts","Failing an exam"],
+    ans: 2
+  },
+  {
+    q: "Which activity sounds most like Aathi?",
+    opts: ["Partying every weekend","Learning something new about tech","Watching reality shows","Shopping all day"],
+    ans: 1
+  },
+  {
+    q: "If Aathi's friend had to describe him in one sentence, which would fit best?",
+    opts: ["Funniest person in the group","Ambitious and future-focused thinker","Most popular person","Most talkative person"],
+    ans: 1
+  },
+  {
+    q: "What is the biggest thing Aathi is trying to build?",
+    opts: ["Fame","A peaceful, independent future life","Social media influence","Luxury lifestyle"],
+    ans: 1
+  },
+  {
+    q: "🔥 BONUS — If Aathi became successful one day, what would make him happier?",
+    opts: ["Millions of followers","Expensive clothes","Freedom, peace, and the people he cares about","Being famous everywhere"],
+    ans: 2,
+    bonus: true
+  }
+];
+
+const tiers = [
+  { max: 5,  emoji: "😂", title: "Stranger Mode", tier: "Do you even know Aathi? 😂 | 0–5" },
+  { max: 10, emoji: "🙂", title: "Casual Friend", tier: "You know the basics! | 6–10" },
+  { max: 15, emoji: "😎", title: "Good Friend", tier: "Not bad at all! | 11–15" },
+  { max: 20, emoji: "❤️", title: "Close Friend", tier: "You really know Aathi! | 16–20" },
+  { max: 21, emoji: "👑", title: "You Know Aathi Better Than Most!", tier: "21/21 — Legend status! 🔥👑" }
+];
+
+let current = 0, score = 0, answered = false;
+
+function startQuiz() {
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+
+  document.getElementById('q-counter').textContent = `Q${current+1} / ${total}`;
+  document.getElementById('progress-fill').style.width = `${(current/total)*100}%`;
+  document.getElementById('live-score').textContent = score;
+
+  const badge = document.getElementById('bonus-badge');
+  q.bonus ? badge.classList.remove('hidden') : badge.classList.add('hidden');
+
+  document.getElementById('q-number').textContent = q.bonus ? 'Bonus Question 🔥' : `Question ${current + 1}`;
+  document.getElementById('q-text').textContent = q.q;
+
+  // Re-trigger animation
+  const card = document.getElementById('q-card');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = '';
+
+  const optBox = document.getElementById('options');
+  optBox.innerHTML = '';
+  const letters = ['A','B','C','D'];
+
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.style.setProperty('--i', i);
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span><span class="check-icon" id="chk-${i}"></span>`;
+    btn.onclick = () => selectAnswer(i, btn);
+    optBox.appendChild(btn);
+  });
+
+  document.getElementById('btn-next').classList.remove('show');
+}
+
+function selectAnswer(chosen, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const opts = document.querySelectorAll('.opt');
+
+  opts.forEach(o => o.classList.add('locked'));
+
+  if (chosen === q.ans) {
+    btn.classList.add('correct');
+    document.getElementById(`chk-${chosen}`).textContent = '✅';
+    score++;
+    document.getElementById('live-score').textContent = score;
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById(`chk-${chosen}`).textContent = '❌';
+    opts[q.ans].classList.add('correct');
+    document.getElementById(`chk-${q.ans}`).textContent = '✅';
+  }
+
+  const next = document.getElementById('btn-next');
+  next.textContent = current < questions.length - 1 ? 'Next →' : 'See My Score 🔥';
+  next.classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current < questions.length) {
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  document.getElementById('screen-quiz').style.display = 'none';
+  const res = document.getElementById('screen-result');
+  res.style.display = 'block';
+
+  const tier = tiers.find(t => score <= t.max) || tiers[tiers.length-1];
+
+  document.getElementById('result-emoji').textContent = tier.emoji;
+  document.getElementById('result-title').textContent = tier.title;
+  document.getElementById('result-tier').textContent = tier.tier;
+  document.getElementById('score-big').textContent = score;
+  document.getElementById('bd-correct').textContent = score;
+  document.getElementById('bd-wrong').textContent = 21 - score;
+  document.getElementById('bd-pct').textContent = Math.round((score/21)*100) + '%';
+
+  if (score >= 16) fireConfetti();
+}
+
+function fireConfetti() {
+  const colors = ['#ff6b35','#ff9b35','#22c55e','#3b82f6','#f59e0b','#ec4899'];
+  const wrap = document.getElementById('confetti');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left: ${Math.random()*100}%;
+      top: -20px;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration: ${1.5 + Math.random()*2.5}s;
+      animation-delay: ${Math.random()*1.2}s;
+      width: ${6+Math.random()*8}px;
+      height: ${6+Math.random()*8}px;
+      border-radius: ${Math.random()>0.5 ? '50%' : '2px'};
+    `;
+    wrap.appendChild(el);
+  }
+}
+
+function buildResultText() {
+  const tier = tiers.find(t => score <= t.max) || tiers[tiers.length-1];
+  return `🔥 Aathi Friendship Test\n\nI scored ${score}/21 — ${tier.title}\n${tier.tier}\n\nHow well do YOU know Aathi? Take the test and find out! 👇`;
+}
+
+function copyResult() {
+  navigator.clipboard.writeText(buildResultText()).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy My Score to Share', 2000);
+  });
+}
+
+function shareWhatsApp() {
+  const text = encodeURIComponent(buildResultText());
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
+function restart() {
+  current = 0; score = 0;
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-quiz').style.display = 'block';
+  renderQuestion();
+}
+</script>
+</body>
+</html>
